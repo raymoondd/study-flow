@@ -420,69 +420,340 @@ mark { background: rgba(99,102,241,0.4); color: inherit; padding: 0 4px; border-
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+/* --- CSS VARIABLES (THEME) --- */
+:root[data-theme="dark"] {
+    --bg-color: #0f172a;
+    --panel-bg: rgba(30, 41, 59, 0.7);
+    --card-bg: rgba(30, 41, 59, 0.5);
+    --border-color: rgba(255, 255, 255, 0.1);
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --primary-color: #6366f1;
+    --primary-hover: #4f46e5;
+    --danger-color: #ef4444;
+    --success-color: #10b981;
+    --shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
 
-/* Play button */
-.play-btn {
-    padding: 6px 20px;
-    border: none;
-    border-radius: 20px;
+:root[data-theme="light"] {
+    --bg-color: #f8fafc;
+    --panel-bg: rgba(255,255,255,0.8);
+    --card-bg: rgba(255,255,255,0.6);
+    --border-color: rgba(0,0,0,0.05);
+    --text-primary: #0f172a;
+    --text-secondary: #64748b;
+    --primary-color: #4f46e5;
+    --primary-hover: #4338ca;
+    --danger-color: #ef4444;
+    --success-color: #10b981;
+    --shadow: 0 8px 32px rgba(148,163,184,0.2);
+}
 
+/* --- RESET --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg-color);
+    color: var(--text-primary);
+    overflow-x: hidden;
+}
+
+/* --- SCROLLBAR --- */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-thumb { background: var(--text-secondary); border-radius: 10px; }
+
+/* --- GLASS --- */
+.glass-panel {
+    background: var(--panel-bg);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--border-color);
+}
+
+.glass-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+    width: 100%;
+}
+
+/* --- LAYOUT --- */
+.app-container {
+    display: flex;
+    min-height: 100dvh;
+}
+
+.sidebar {
+    width: 260px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+}
+
+.brand {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 40px;
+}
+
+.nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    list-style: none;
+}
+
+.nav-item {
+    padding: 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    color: var(--text-secondary);
+}
+
+.nav-item.active {
     background: var(--primary-color);
     color: #fff;
-
-    cursor: pointer;
-    font-size: 12px;
-    
 }
 
-/* Active song highlight */
-.playlist-item.active {
-    border-color: var(--primary-color);
-    background: rgba(59,130,246,0.15);
+.content-area {
+    flex: 1;
+    padding: 32px;
+    overflow-y: auto;
 }
 
-/* Controls */
-.music-controls {
+/* --- HEADER --- */
+.top-header {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--primary-color);
+}
+
+/* --- GRID --- */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+}
+
+.dashboard-widgets {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+/* --- TASKS --- */
+.task-input-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.task-input-container input,
+.task-input-container select {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: transparent;
+    color: var(--text-primary);
+    width: 100%;
+}
+
+.task-list {
+    display: flex;
+    flex-direction: column;
     gap: 10px;
 }
 
-.music-controls {
+.task-item {
+    padding: 14px;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
     display: flex;
+    justify-content: space-between;
+}
+
+/* --- NOTES --- */
+.notes-container {
+    display: flex;
+    flex-direction: column;
     gap: 10px;
-    justify-content: center;
+}
+
+#note-title {
+    font-size: 18px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+#note-content {
+    min-height: 200px;
+}
+
+/* --- TIMER --- */
+.timer-container {
+    display: flex;
+    flex-direction: column;
     align-items: center;
 }
 
-.progress-container {
-    width: 100%;
-    margin-top: 10px;
+.timer-circle {
+    width: 220px;
+    height: 220px;
 }
 
-#progress-bar {
-    width: 100%;
+.timer-display {
+    font-size: 48px;
 }
 
-#audio-player {
+/* --- BUTTONS --- */
+.btn-primary {
+    background: var(--primary-color);
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+/* --- MUSIC --- */
+.music-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.playlist-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+/* --- MOBILE NAV --- */
+.bottom-nav {
     display: none;
 }
 
-#music-upload {
-    padding: 10px;
-    border-radius: 10px;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    color: var(--text-primary);
+/* ========================= */
+/* --- RESPONSIVE --- */
+/* ========================= */
+
+/* Tablet */
+@media (max-width: 1024px) {
+    html { font-size: 15px; }
+
+    .content-area {
+        padding: 20px;
+    }
+
+    .timer-circle {
+        width: 180px;
+        height: 180px;
+    }
+
+    .timer-display {
+        font-size: 36px;
+    }
 }
 
-.playlist-item.active {
-    border: 1px solid var(--primary-color);
-    background: rgba(99,102,241,0.15);
+/* Mobile */
+@media (max-width: 768px) {
+
+    .app-container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        display: none;
+    }
+
+    .content-area {
+        padding: 16px;
+        padding-bottom: 80px;
+    }
+
+    .task-input-container {
+        flex-direction: column;
+    }
+
+    .stats-grid,
+    .dashboard-widgets {
+        grid-template-columns: 1fr;
+    }
+
+    .bottom-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        justify-content: space-around;
+        padding: 10px;
+        background: var(--panel-bg);
+        backdrop-filter: blur(10px);
+        border-top: 1px solid var(--border-color);
+    }
+
+    .bottom-nav .nav-item {
+        font-size: 18px;
+    }
 }
 
-.focus-modes button{
-    padding: 10px;
+/* Small phones */
+@media (max-width: 480px) {
 
+    html { font-size: 14px; }
+
+    .glass-card {
+        padding: 14px;
+    }
+
+    .task-item {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .timer-circle {
+        width: 140px;
+        height: 140px;
+    }
+
+    .timer-display {
+        font-size: 26px;
+    }
+
+    .btn-primary {
+        width: 100%;
+    }
+
+    .playlist-item {
+        flex-direction: column;
+        gap: 6px;
+    }
+}
+
+/* Large screens */
+@media (min-width: 1400px) {
+    .content-area {
+        padding: 40px 80px;
+    }
 }
 
 
