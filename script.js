@@ -1,4 +1,4 @@
-alert('Available on mobile phones');
+
 
 
 document.addEventListener('DOMContentLoaded', () => {
