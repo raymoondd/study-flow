@@ -3,17 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RAYMOND | Study Productivity</title>
+    <title>Study Productivity</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link rel="stylesheet" href="style.css">
 
-    <!-- Favicon (Best Practice Setup) -->
+
+     <!-- Favicon (Best Practice Setup) -->
     <link rel="icon" href="favicon.ico">
     <link rel="icon" type="image/png" sizes="16x16" href="main.png">
     <link rel="icon" type="image/png" sizes="32x32" href="main.png">
     <link rel="icon" type="image/png" sizes="48x48" href="main.png">
-    
+
+
+
 </head>
 <body>
     <div id="loader">
@@ -34,16 +37,15 @@
                 <li class="nav-item" data-target="notes"><i class="ph ph-notebook"></i><span>Summarizer</span></li>
                 <li class="nav-item" data-target="music"><i class="ph ph-music-notes"></i><span>Music</span></li>
                 <li class="nav-item" data-target="focus"><i class="ph ph-timer"></i><span>Focus Mode</span></li>
-                <li class="nav-item" data-target="settings"><i class="ph ph-gear"></i><span>Settings</span></li>
             </ul>
         </nav>
 
         <main class="content-area">
             <header class="top-header">
                 <h1 id="page-title">Dashboard</h1>
-                <div class="user-profile">
-                    <div class="avatar">
-                        <i class="ph ph-user"></i>
+                <div class="user-profile nav-item" data-target="settings" title="Settings" style="cursor: pointer;">
+                    <div class="avatar" style="background: transparent; border: 1px solid var(--border-color); color: var(--text-primary);">
+                        <i class="ph ph-gear"></i>
                     </div>
                 </div>
             </header>
@@ -52,7 +54,6 @@
                 
                <section id="music" class="page">
                     <div class="music-container glass-card">
-
                         <div class="widget-header">
                             <div class="widget-title">
                                 <i class="ph ph-music-notes"></i>
@@ -60,23 +61,14 @@
                             </div>
                         </div>
 
-                        <!-- Upload -->
                         <input type="file" id="music-upload" accept="audio/*" multiple>
-
-                        <!-- Now Playing -->
                         <div id="now-playing">Not playing</div>
-
-                        <!-- Audio Player -->
                         <audio id="audio-player" controls></audio>
-
-                        <!-- Progress -->
 
                         <div class="progress-container">
                             <input type="range" id="progress-bar" value="0" min="0" max="100">
                         </div>
 
-
-                        <!-- Controls -->
                         <div class="music-controls">
                             <button id="prev-btn" class="btn-secondary">⏮</button>
                             <button id="play-btn" class="btn-primary">▶</button>
@@ -84,9 +76,7 @@
                             <button id="shuffle-btn" class="btn-secondary">🔀</button>
                         </div>
 
-                        <!-- Playlist -->
                         <div class="playlist" id="playlist"></div>
-
                     </div>
                 </section>
                 
@@ -118,8 +108,7 @@
                     <div class="dashboard-widgets">
                         <div class="widget glass-card">
                             <h3>Habit Tracker</h3>
-                            <div class="habit-list" id="habit-list">
-                                </div>
+                            <div class="habit-list" id="habit-list"></div>
                         </div>
                         <div class="widget glass-card">
                             <h3>Progress Overview</h3>
@@ -133,85 +122,98 @@
 
                 <section id="tasks" class="page">
                     <div class="task-input-container glass-card">
-                        <input type="text" id="new-task-input" placeholder="What needs to be done?">
-                        <select id="new-task-category">
-                            <option value="Study">Study</option>
-                            <option value="Personal">Personal</option>
-                        </select>
-                        <button id="add-task-btn" class="btn-primary"><i class="ph ph-plus"></i> Add</button>
+                        <div class="task-input-row">
+                            <input type="text" id="new-task-input" placeholder="What needs to be done?">
+                            <select id="new-task-category">
+                                <option value="Study">Study</option>
+                                <option value="Personal">Personal</option>
+                            </select>
+                        </div>
+                        
+                        <div class="task-input-row time-action-group">
+                            <div class="time-inputs">
+                                <div class="time-field">
+                                    <label>Start</label>
+                                    <input type="time" id="new-task-start">
+                                </div>
+                                <div class="time-field">
+                                    <label>End</label>
+                                    <input type="time" id="new-task-end">
+                                </div>
+                            </div>
+                            <button id="add-task-btn" class="btn-primary">
+                                <i class="ph ph-plus"></i> Add Task
+                            </button>
+                        </div>
                     </div>
                     
-                    <div class="task-filters">
-                        <button class="filter-btn active" data-filter="all">All</button>
-                        <button class="filter-btn" data-filter="pending">Pending</button>
-                        <button class="filter-btn" data-filter="completed">Completed</button>
-                    </div>
-                    <div class="task-list" id="task-list">
+                    <div class="task-manager-view glass-card">
+                        <div class="task-filters">
+                            <button class="filter-btn active" data-filter="all">All</button>
+                            <button class="filter-btn" data-filter="pending">Pending</button>
+                            <button class="filter-btn" data-filter="completed">Completed</button>
                         </div>
+                        <div class="task-list" id="task-list"></div>
+                    </div>
                 </section>
 
                 <section id="notes" class="page">
                     <div class="notes-container glass-card">
-                        <div class="notes-header">
-                            <input type="text" id="note-title" placeholder="Note Title...">
-                            <button id="summarize-btn" class="btn-secondary"><i class="ph ph-magic-wand"></i> Summarize</button>
+                        <div class="note-header">
+                            <input type="text" id="note-title" placeholder="Untitled Note">
                         </div>
-                        <textarea id="note-content" placeholder="Start typing your study notes here..."></textarea>
-                        <div class="summary-box hidden" id="summary-box">
-                            
-                            <h4>Smart Summary</h4>
 
-                            <div class="summary-options">
-                                <button id="summary-sentence" class="summary-btn active">Sentence</button>
-                                
+                        <div class="note-scroll-area">
+                            <div class="note-body">
+                                <textarea id="note-content" placeholder="Type or paste your study text here..."></textarea>
+
+                                <div id="summary-box" class="summary-result-zone hidden">
+                                    <div class="summary-badge"><i class="ph ph-sparkle"></i> Smart Summary</div>
+                                    <div id="summary-content"></div>
+                                </div>
                             </div>
+                        </div>
 
-                            <p id="summary-content"></p>
+                        <div class="note-footer glass-footer">
+                            <button id="summarize-btn" class="btn-summarize" title="Summarize">
+                                <i class="ph ph-magic-wand"></i>
+                                <span>Summarize</span>
+                            </button>
                         </div>
                     </div>
                 </section>
 
+
+
                 <section id="focus" class="page">
-                <div class="timer-container glass-card">
+                    <div class="timer-container glass-card">
+                        <div class="timer-circle">
+                            <svg class="progress-ring" width="250" height="250">
+                                <circle class="progress-ring__circle"
+                                    stroke="var(--primary-color)"
+                                    stroke-width="12"
+                                    fill="transparent"
+                                    r="110"
+                                    cx="125"
+                                    cy="125"/>
+                            </svg>
+                            <div class="timer-display" id="time-display">25:00</div>
+                            <div class="timer-mode" id="timer-mode-label">Work Session</div>
+                        </div>
 
-                    <!-- MODE SELECTOR 
-                    <div class="focus-modes">
-                        <button class="mode-btn active" data-mode="work">Work</button>
-                        <button class="mode-btn" data-mode="break">Break</button>
-                        <button class="mode-btn" data-mode="custom">Custom</button>
+                        <div class="timer-controls">
+                            <button id="timer-start" class="btn-primary">Start</button>
+                            <button id="timer-pause" class="btn-secondary">Pause</button>
+                            <button id="timer-reset" class="btn-secondary">Reset</button>
+                        </div>
+
+                        <div class="break-options">
+                            <button class="break-btn active" data-break="auto">Auto Break</button>
+                            <button class="break-btn" data-break="manual">Manual Break</button>
+                        </div>
+                        
+                        <button id="start-break-btn" class="btn-primary" style="display: none; margin-top: 15px;">Start Break</button>
                     </div>
-                    -->
-                    <div class="timer-circle">
-                        <svg class="progress-ring" width="250" height="250">
-                            <circle class="progress-ring__circle"
-                                stroke="var(--primary-color)"
-                                stroke-width="12"
-                                fill="transparent"
-                                r="110"
-                                cx="125"
-                                cy="125"/>
-                        </svg>
-
-                        <div class="timer-display" id="time-display">25:00</div>
-                        <div class="timer-mode" id="timer-mode-label">Work Session</div>
-                    </div>
-
-                    <div class="timer-controls">
-                        <button id="timer-start" class="btn-primary">Start</button>
-                        <button id="timer-pause" class="btn-secondary">Pause</button>
-                        <button id="timer-reset" class="btn-secondary">Reset</button>
-                    </div>
-
-                    <!--
-                    <div class="break-options">
-                        <button class="break-btn active" data-break="auto">Auto Break</button>
-                        <button class="break-btn" data-break="manual">Manual Break</button>
-                    </div>
-
-                    -->
-
-
-                </div>
                 </section>
 
                 <section id="settings" class="page">
@@ -242,9 +244,9 @@
             <ul class="nav-links">
                 <li class="nav-item active" data-target="dashboard"><i class="ph ph-squares-four"></i></li>
                 <li class="nav-item" data-target="tasks"><i class="ph ph-check-circle"></i></li>
-                <li class="nav-item" data-target="notes"><i class="ph ph-notebook"></i></li>
+                <li class="nav-item center-fab" data-target="notes"><div class="fab-inner"><i class="ph ph-notebook"></i></div></li>
+                <li class="nav-item" data-target="music"><i class="ph ph-music-notes"></i></li>
                 <li class="nav-item" data-target="focus"><i class="ph ph-timer"></i></li>
-                <li class="nav-item" data-target="settings"><i class="ph ph-gear"></i></li>
             </ul>
         </nav>
     </div>
