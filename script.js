@@ -1,3 +1,6 @@
+alert('Available on mobile phones');
+
+
 document.addEventListener('DOMContentLoaded', () => {
     // --- 1. STATE MANAGEMENT ---
     const defaultState = {
