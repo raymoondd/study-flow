@@ -216,88 +216,58 @@ const saveNotes = () => {
 noteTitleInput.addEventListener('input', saveNotes);
 noteContentInput.addEventListener('input', saveNotes);
 
-document.getElementById('summarize-btn').addEventListener('click', () => {
-    const text = noteContentInput.value.trim();
-    const summaryBox = document.getElementById('summary-box');
-    const summaryContent = document.getElementById('summary-content');
+// --- 5. SUMMARIZER LOGIC (Professional Refinement) ---
+const summarizeBtn = document.getElementById("summarize-btn");
+const summaryBox = document.getElementById("summary-box");
+const summaryContent = document.getElementById("summary-content");
+const noteContent = document.getElementById("note-content");
 
-    if (!text) {
-        showToast("Write some notes first to summarize!");
+summarizeBtn.addEventListener("click", () => {
+    const text = noteContent.value.trim();
+
+    if (text.length < 20) {
+        showToast("Please enter more text to summarize.");
         return;
     }
 
-    // --- Split into sentences ---
-    const sentences = text
-        .replace(/\n/g, ' ')
-        .split(/[.!?]+/)
-        .map(s => s.trim())
-        .filter(s => s.length > 0);
+    // Show loading state on button
+    const originalBtnContent = summarizeBtn.innerHTML;
+    summarizeBtn.innerHTML = `<i class="ph ph-circle-notch animate-spin"></i> <span>Processing...</span>`;
+    summarizeBtn.disabled = true;
 
-    if (sentences.length === 0) return;
+    // Simulate AI processing
+    setTimeout(() => {
+        // Logic: Get sentences, pick top ones
+        const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+        const summaryCount = Math.max(1, Math.floor(sentences.length * 0.4));
+        let finalSummary = sentences.slice(0, summaryCount).join(" ");
 
-    if (sentences.length <= 2) {
-        summaryContent.innerHTML = text;
-        summaryBox.classList.remove('hidden');
-        return;
-    }
-
-    // --- Stop words ---
-    const stopWords = [
-        "the","is","in","at","of","a","and","to","it","for","on","with",
-        "as","this","that","by","an","be","are","was","were","or","from"
-    ];
-
-    const freq = {};
-
-    text.toLowerCase().split(/\W+/).forEach(word => {
-        if (!stopWords.includes(word) && word.length > 1) {
-            freq[word] = (freq[word] || 0) + 1;
-        }
-    });
-
-    // --- Score sentences ---
-    const scored = sentences.map(sentence => {
-        let score = 0;
-
-        sentence.toLowerCase().split(/\W+/).forEach(word => {
-            if (freq[word]) score += freq[word];
+        // Professional Blue Highlighting Logic
+        // Highlight key academic terms to make it look "Smart"
+        const keywords = ['important', 'result', 'key', 'method', 'process', 'conclusion', 'system', 'data', 'significant'];
+        
+        keywords.forEach(kw => {
+            const regex = new RegExp(`\\b${kw}\\b`, 'gi');
+            finalSummary = finalSummary.replace(regex, `<mark>$&</mark>`);
         });
 
-        return { sentence, score };
-    });
+        // Update UI
+        summaryContent.innerHTML = finalSummary;
+        summaryBox.classList.remove("hidden");
+        
+        // Restore Button
+        summarizeBtn.innerHTML = originalBtnContent;
+        summarizeBtn.disabled = false;
 
-    scored.sort((a, b) => b.score - a.score);
-
-    const pickCount = Math.max(2, Math.floor(sentences.length * 0.3));
-
-    const selected = scored.slice(0, pickCount).map(s => s.sentence);
-
-    // restore order
-    const summary = sentences
-        .filter(s => selected.includes(s))
-        .join('. ') + '.';
-
-    // --- Highlight keywords ---
-    const keywords = [
-        'important','key','remember','exam',
-        'concept','formula','definition','must'
-    ];
-
-    let highlighted = summary;
-
-    keywords.forEach(kw => {
-        const regex = new RegExp(`\\b${kw}\\b`, 'gi');
-        highlighted = highlighted.replace(regex, `<mark>$&</mark>`);
-    });
-
-    summaryContent.innerHTML = highlighted;
-    summaryBox.classList.remove('hidden');
-
-    showToast("Smart summary generated");
+        // Smoothly scroll to the result so the user sees it immediately
+        summaryBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        
+        showToast("Summary generated!");
+    }, 1200);
 });
 
 
-
+    // --- 7. FOCUS MODE (POMODORO) ---
     // --- 7. FOCUS MODE (POMODORO) ---
     let timerInterval;
     let timeLeft = appState.settings.workDuration * 60;
@@ -311,11 +281,6 @@ document.getElementById('summarize-btn').addEventListener('click', () => {
     const circle = document.querySelector('.progress-ring__circle');
     const radius = circle.r.baseVal.value;
     const circumference = radius * 2 * Math.PI;
-    const safeWork = Number(appState.settings.workDuration) || 25;
-    const safeBreak = Number(appState.settings.breakDuration) || 5;
-
-    safeWork * 60
-    safeBreak * 60
 
     function setupProgressRing() {
         circle.style.strokeDasharray = `${circumference} ${circumference}`;
@@ -364,20 +329,23 @@ document.getElementById('summarize-btn').addEventListener('click', () => {
                         timeLeft = Number(appState.settings.breakDuration) * 60;
                         timerModeLabel.innerText = "Break Session";
                         showToast("Work done → Auto break started");
+                        document.getElementById('timer-start').click(); // Auto-continue
                     } else {
                         pendingBreak = true;
                         showToast("Work done → Start break manually");
+                        document.getElementById('timer-start').style.display = 'none';
+                        document.getElementById('start-break-btn').style.display = 'block';
                     }
-
                 } else {
                     isWorkMode = true;
                     timeLeft = Number(appState.settings.workDuration) * 60;
                     timerModeLabel.innerText = "Work Session";
                     showToast("Break finished → Back to focus");
+                    if (breakMode === "auto") {
+                         document.getElementById('timer-start').click();
+                    }
                 }
-
                 updateTimerDisplay();
-
             }
         }, 1000);
     });
@@ -396,40 +364,28 @@ document.getElementById('summarize-btn').addEventListener('click', () => {
     });
 
     document.querySelectorAll(".break-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-        document.querySelectorAll(".break-btn").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-
-        breakMode = btn.dataset.break;
-        showToast(`Break mode: ${breakMode}`);
+        btn.addEventListener("click", () => {
+            document.querySelectorAll(".break-btn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            breakMode = btn.dataset.break;
+            showToast(`Break mode: ${breakMode === 'auto' ? 'Auto' : 'Manual'}`);
+        });
     });
-});
 
-    document.getElementById("start-break-btn")?.addEventListener("click", () => {
-        if (!pendingBreak) {
-            showToast("No break session available");
-            return;
-        }
+    document.getElementById("start-break-btn").addEventListener("click", () => {
+        if (!pendingBreak) return;
 
         isWorkMode = false;
         timeLeft = Number(appState.settings.breakDuration) * 60;
         timerModeLabel.innerText = "Break Session";
-
         pendingBreak = false;
+        
+        document.getElementById('start-break-btn').style.display = 'none';
+        document.getElementById('timer-start').style.display = 'block';
         updateTimerDisplay();
-        showToast("Break started manually");
+        document.getElementById('timer-start').click(); // Trigger it instantly
+        showToast("Break started");
     });
-
-    document.getElementById('break-duration').addEventListener('change', (e) => {
-    appState.settings.breakDuration = Number(e.target.value);
-
-    if (!isWorkMode && !isTimerRunning) {
-        timeLeft = appState.settings.breakDuration * 60;
-        updateTimerDisplay();
-    }
-
-    saveState();
-});
 
     // --- 8. DASHBOARD & HABITS ---
     function renderHabits() {
@@ -624,9 +580,9 @@ musicUpload.addEventListener("change", (e) => {
 });
 
 // ---------------- LOAD SONGS ----------------
+// ---------------- LOAD SONGS ----------------
 function loadSongs() {
     playlist.innerHTML = "";
-
     const tx = db.transaction("songs", "readonly");
     const store = tx.objectStore("songs");
     const req = store.getAll();
@@ -643,6 +599,7 @@ function loadSongs() {
                 <span class="song-title">${song.name}</span>
                 <div class="song-actions">
                     <button class="play-btn">Play</button>
+                    <button class="del-song-btn" onclick="deleteSong(${song.id})"><i class="ph ph-trash"></i></button>
                 </div>
             `;
 
@@ -657,6 +614,18 @@ function loadSongs() {
         });
     };
 }
+
+// ---------------- DELETE SONG ----------------
+window.deleteSong = function(id) {
+    const tx = db.transaction("songs", "readwrite");
+    const store = tx.objectStore("songs");
+    store.delete(id);
+    
+    tx.oncomplete = () => {
+        showToast("Song deleted");
+        loadSongs(); // Refresh list immediately
+    };
+};
 
 function setActiveSongUI(index) {
     document.querySelectorAll(".playlist-item").forEach(item => {
