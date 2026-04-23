@@ -863,8 +863,10 @@ mark {
     background-color: var(--primary-hover);
     color: #fff;
     font-size: 20px;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 .contact:hover {
     background-color: green;
+    font-family: Arial, Helvetica, sans-serif;
 }
