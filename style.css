@@ -856,3 +856,11 @@ mark {
         box-shadow: 0 2px 2px rgba(99, 102, 241, 0.6);
     }
 }
+
+.contact {
+    padding: 10px;
+    border-radius: 10px;
+    background-color: var(--primary-hover);
+    color: #fff;
+    font-size: 20px;
+}
