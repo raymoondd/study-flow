@@ -734,3 +734,7 @@ function syncTimerToSettings() {
 
     updateTimerDisplay();
 }
+
+function contactme() {
+    window.open("https://forms.gle/GMX5npeeqc2Qdu6SA", "_blank", "noopener,noreferrer");
+}
