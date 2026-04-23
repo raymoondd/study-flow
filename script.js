@@ -739,10 +739,3 @@ function contactme() {
     window.open("https://forms.gle/GMX5npeeqc2Qdu6SA", "_blank", "noopener,noreferrer");
 }
 
-.contact {
-    padding: 10px;
-    border-radius: 10px;
-    background-color: var(--primary-hover);
-    color: #fff;
-    font-size: 20px;
-}
