@@ -42,7 +42,7 @@
 
         <main class="content-area">
             <header class="top-header">
-                <h1 id="page-title">Created By: Raymond Pernitez</h1>
+                <h1 id="page-title">Dashboard</h1>
                 <div class="user-profile nav-item" data-target="settings" title="Settings" style="cursor: pointer;">
                     <div class="avatar" style="background: transparent; border: 1px solid var(--border-color); color: var(--text-primary);">
                         <i class="ph ph-gear"></i>
@@ -219,6 +219,11 @@
                 <section id="settings" class="page">
                     <div class="settings-container glass-card">
                         <h3>Preferences</h3>
+
+                        <div class="setting-item">
+                            <span>Software Engineer: <mark>Raymond Pernitez</mark></span>
+                        </div>
+                        
                         <div class="setting-item">
                             <span>Appearance</span>
                             <button id="theme-toggle" class="btn-icon"><i class="ph ph-moon"></i></button>
@@ -234,6 +239,10 @@
                         <div class="setting-item danger-zone">
                             <span>Reset All Data</span>
                             <button id="reset-data-btn" class="btn-danger">Reset</button>
+                        </div>
+                        <div class="setting-item danger-zone">
+                            <span>Contact us</span>
+                            <button class="contact" onclick="contactme()">Send a message</button>
                         </div>
                     </div>
                 </section>
