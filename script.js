@@ -1,4 +1,4 @@
-
+alert('AI Chatbot available soon');
 
 
 document.addEventListener('DOMContentLoaded', () => {
