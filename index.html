@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>StudyFlow - Productivity & AI Tutor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="style.css">
+
+     <link rel="icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="main.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="main.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="main.png">
+    
+</head>
+<body>
+    <div id="loader">
+        <div class="spinner"></div>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <div class="app-container">
+        <nav class="sidebar glass-panel">
+            <div class="brand">
+                <i class="ph ph-lightning"></i>
+                <h2>StudyFlow</h2>
+            </div>
+            <ul class="nav-links">
+                <li class="nav-item active" data-target="dashboard"><i class="ph ph-squares-four"></i><span>Dashboard</span></li>
+                <li class="nav-item" data-target="tasks"><i class="ph ph-check-circle"></i><span>Tasks</span></li>
+                <li class="nav-item" data-target="chatbot"><i class="ph ph-robot"></i><span>AI Tutor</span></li>
+                <li class="nav-item" data-target="music"><i class="ph ph-music-notes"></i><span>Music</span></li>
+                <li class="nav-item" data-target="focus"><i class="ph ph-timer"></i><span>Focus Mode</span></li>
+            </ul>
+        </nav>
+
+        <main class="content-area">
+            <header class="top-header">
+                <h1 id="page-title">Dashboard</h1>
+                <div class="user-profile nav-item" data-target="settings" title="Settings">
+                    <div class="avatar">
+                        <i class="ph ph-gear"></i>
+                    </div>
+                </div>
+            </header>
+
+            <div class="pages">
+                <section id="dashboard" class="page active">
+                    <div class="stats-grid">
+                        <div class="stat-card glass-card">
+                            <div class="stat-icon"><i class="ph ph-clock"></i></div>
+                            <div class="stat-info">
+                                <h3>Total Focus Time</h3>
+                                <p id="dash-time">0 min</p>
+                            </div>
+                        </div>
+                        <div class="stat-card glass-card">
+                            <div class="stat-icon"><i class="ph ph-check-square"></i></div>
+                            <div class="stat-info">
+                                <h3>Tasks Completed</h3>
+                                <p id="dash-tasks">0</p>
+                            </div>
+                        </div>
+                        <div class="stat-card glass-card">
+                            <div class="stat-icon"><i class="ph ph-flame"></i></div>
+                            <div class="stat-info">
+                                <h3>Current Streak</h3>
+                                <p id="dash-streak">0 days</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dashboard-widgets">
+                        <div class="widget glass-card">
+                            <h3>Habit Tracker</h3>
+                            <div class="habit-list" id="habit-list"></div>
+                        </div>
+                        <div class="widget glass-card">
+                            <h3>Progress Overview</h3>
+                            <div class="progress-bar-container">
+                                <span class="progress-label">Task Completion Rate</span>
+                                <div class="progress-track"><div class="progress-fill" id="task-progress-fill"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="tasks" class="page">
+                    <div class="task-input-container glass-card">
+                        <div class="task-input-row">
+                            <input type="text" id="new-task-input" placeholder="What needs to be done?">
+                            <select id="new-task-category">
+                                <option value="Study">Study</option>
+                                <option value="Personal">Personal</option>
+                            </select>
+                            <button id="add-task-btn" class="btn-primary">
+                                <i class="ph ph-plus"></i> Add
+                            </button>
+                        </div>
+                    </div>
+                    <div class="task-manager-view glass-card">
+                        <div class="task-filters">
+                            <button class="filter-btn active" data-filter="all">All</button>
+                            <button class="filter-btn" data-filter="pending">Pending</button>
+                            <button class="filter-btn" data-filter="completed">Completed</button>
+                        </div>
+                        <div class="task-list" id="task-list"></div>
+                    </div>
+                </section>
+
+                <section id="chatbot" class="page">
+                    <div class="glass-card chat-wrapper">
+                        <div class="chat-header">
+                            <h3><i class="ph ph-robot"></i> AI Study Tutor</h3>
+                            <p>Ask me anything about your study materials.</p>
+                        </div>
+                        <div id="chat-messages" class="chat-messages">
+                            <div class="message bot-msg">Hello! I'm  Raymond your AI Tutor. What are we studying today?</div>
+                        </div>
+                        <div class="chat-input-area">
+                            <input type="text" id="chat-input" placeholder="Ask a question...">
+                            <button id="chat-send-btn" class="btn-primary"><i class="ph ph-paper-plane-right"></i></button>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="music" class="page">
+                    <div class="music-container glass-card">
+                        <div class="widget-header">
+                            <div class="widget-title">
+                                <i class="ph ph-music-notes"></i>
+                                <h3>Focus Playlist</h3>
+                            </div>
+                        </div>
+                        <input type="file" id="music-upload" accept="audio/*" multiple>
+                        <div id="now-playing">Not playing</div>
+                        <audio id="audio-player"></audio>
+                        <div class="progress-container">
+                            <input type="range" id="progress-bar" value="0" min="0" max="100">
+                        </div>
+                        <div class="music-controls">
+                            <button id="prev-btn" class="btn-secondary"><i class="ph ph-skip-back"></i></button>
+                            <button id="play-btn" class="btn-primary"><i class="ph ph-play"></i></button>
+                            <button id="next-btn" class="btn-secondary"><i class="ph ph-skip-forward"></i></button>
+                            <button id="shuffle-btn" class="btn-secondary"><i class="ph ph-shuffle"></i></button>
+                        </div>
+                        <div class="playlist" id="playlist"></div>
+                    </div>
+                </section>
+
+                <section id="focus" class="page">
+                    <div class="timer-container glass-card">
+                        <div class="timer-circle">
+                            <svg class="progress-ring" width="250" height="250">
+                                <circle class="progress-ring__circle" stroke="var(--primary-color)" stroke-width="12" fill="transparent" r="110" cx="125" cy="125"/>
+                            </svg>
+                            <div class="timer-display" id="time-display">25:00</div>
+                            <div class="timer-mode" id="timer-mode-label">Work Session</div>
+                        </div>
+                        <div class="timer-controls">
+                            <button id="timer-start" class="btn-primary"><i class="ph ph-play"></i> Start</button>
+                            <button id="timer-pause" class="btn-secondary"><i class="ph ph-pause"></i> Pause</button>
+                            <button id="timer-reset" class="btn-secondary"><i class="ph ph-arrow-counter-clockwise"></i> Reset</button>
+                        </div>
+                        <div class="break-options">
+                            <button class="break-btn active" data-break="auto">Auto Break</button>
+                            <button class="break-btn" data-break="manual">Manual Break</button>
+                        </div>
+                        <button id="start-break-btn" class="btn-primary" style="display: none; margin-top: 15px;">Start Break</button>
+                    </div>
+                </section>
+
+                <section id="settings" class="page">
+                    <div class="settings-container glass-card">
+                        <h3>Preferences</h3>
+                        
+                        <div class="setting-item">
+                            <div class="setting-text">
+                                <span>AI API Key</span>
+                                <small style="display:block; color:var(--text-secondary); font-size:12px;">Get a free API key from Google AI Studio</small>
+                            </div>
+                            <input type="password" id="api-key-input" placeholder="Paste key here..." style="width: 150px;">
+                        </div>
+
+                        <div class="setting-item">
+                            <span>Appearance</span>
+                            <button id="theme-toggle" class="btn-icon"><i class="ph ph-moon"></i></button>
+                        </div>
+                        <div class="setting-item">
+                            <span>Focus Mode (mins)</span>
+                            <input type="number" id="work-duration" value="25" min="1" max="60">
+                        </div>
+                        <div class="setting-item">
+                            <span>Break Duration (mins)</span>
+                            <input type="number" id="break-duration" value="5" min="1" max="30">
+                        </div>
+                        <div class="setting-item danger-zone">
+                            <span>Reset All Data</span>
+                            <button id="reset-data-btn" class="btn-danger"><i class="ph ph-trash"></i> Reset</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <nav class="bottom-nav glass-panel">
+            <ul class="nav-links">
+                <li class="nav-item active" data-target="dashboard"><i class="ph ph-squares-four"></i></li>
+                <li class="nav-item" data-target="tasks"><i class="ph ph-check-circle"></i></li>
+                <li class="nav-item center-fab" data-target="chatbot"><div class="fab-inner"><i class="ph ph-robot"></i></div></li>
+                <li class="nav-item" data-target="music"><i class="ph ph-music-notes"></i></li>
+                <li class="nav-item" data-target="focus"><i class="ph ph-timer"></i></li>
+            </ul>
+        </nav>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
