@@ -1,3 +1,6 @@
+alert('THE AI CHATBOT IS NOW WORKING. TRY IT OUT.');
+
+
 document.addEventListener('DOMContentLoaded', () => {
     // --- 1. STATE MANAGEMENT ---
     const defaultState = {
