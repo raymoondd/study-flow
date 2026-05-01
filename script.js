@@ -149,66 +149,62 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // --- 6. AI TUTOR LOGIC (GEMINI API) ---
-    const chatInput = document.getElementById('chat-input');
-    const chatSendBtn = document.getElementById('chat-send-btn');
-    const chatMessages = document.getElementById('chat-messages');
+    // --- 6. AI TUTOR LOGIC (BACKEND API) ---
+const chatInput = document.getElementById('chat-input');
+const chatSendBtn = document.getElementById('chat-send-btn');
+const chatMessages = document.getElementById('chat-messages');
 
-    function appendMessage(text, sender) {
-        const msgDiv = document.createElement('div');
-        msgDiv.className = `message ${sender}-msg`;
-        
-        // Basic Markdown-to-HTML parser for bold text returned by Gemini
-        let formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-        formattedText = formattedText.replace(/\n/g, '<br>');
-        
-        msgDiv.innerHTML = formattedText;
-        chatMessages.appendChild(msgDiv);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
+function appendMessage(text, sender) {
+    const msgDiv = document.createElement('div');
+    msgDiv.className = `message ${sender}-msg`;
+    
+    let formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    formattedText = formattedText.replace(/\n/g, '<br>');
+    
+    msgDiv.innerHTML = formattedText;
+    chatMessages.appendChild(msgDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
 
-    async function handleChat() {
-        const message = chatInput.value.trim();
-        const apiKey = appState.settings.apiKey;
+async function handleChat() {
+    const message = chatInput.value.trim();
+    if (!message) return;
 
-        if (!message) return;
-        
-        appendMessage(message, 'user');
-        chatInput.value = '';
-        
-        if (!apiKey) {
-            setTimeout(() => appendMessage('The AI Tutor is still being developed. It’s not available yet—check back soon.', 'bot'), 500);
-            return;
+    appendMessage(message, 'user');
+    chatInput.value = '';
+
+    appendMessage('<i class="ph ph-circle-notch ph-spin"></i> Thinking...', 'bot');
+    const loadingMsg = chatMessages.lastElementChild;
+
+    try {
+        const response = await fetch('https://study-back-end.onrender.com/api/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ message })
+        });
+
+        const data = await response.json();
+        loadingMsg.remove();
+
+        if (!response.ok) {
+            throw new Error(data.reply || "Server error");
         }
 
-        appendMessage('<i class="ph ph-circle-notch ph-spin"></i> Thinking...', 'bot');
-        const loadingMsg = chatMessages.lastElementChild;
+        appendMessage(data.reply, 'bot');
 
-        try {
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: "You are a helpful and concise study tutor for a student. Answer this: " + message }] }]
-                })
-            });
-            
-            const data = await response.json();
-            loadingMsg.remove();
-
-            if(data.error) throw new Error(data.error.message);
-            
-            const reply = data.candidates[0].content.parts[0].text;
-            appendMessage(reply, 'bot');
-        } catch (error) {
-            loadingMsg.remove();
-            appendMessage(`Error: ${error.message || "Failed to connect to API. Is your key correct?"}`, 'bot');
-        }
+    } catch (error) {
+        loadingMsg.remove();
+        appendMessage('Error: Unable to connect to AI server.', 'bot');
+        console.error(error);
     }
+}
 
-    chatSendBtn.addEventListener('click', handleChat);
-    chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleChat(); });
-
+chatSendBtn.addEventListener('click', handleChat);
+chatInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') handleChat();
+});
     // --- 7. FOCUS MODE (POMODORO) ---
     let timerInterval;
     let timeLeft = appState.settings.workDuration * 60;
