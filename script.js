@@ -1,5 +1,3 @@
-alert("The AI Tutor is still being developed. It's not available yet—check back soon.");
-
 document.addEventListener('DOMContentLoaded', () => {
     // --- 1. STATE MANAGEMENT ---
     const defaultState = {
@@ -47,9 +45,33 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('work-duration').value = appState.settings.workDuration;
         document.getElementById('break-duration').value = appState.settings.breakDuration;
         document.getElementById('api-key-input').value = appState.settings.apiKey;
+        document.getElementById("ai-dev-notice").style.display = "block"; //remove if tutor is available
         
         setupProgressRing();
+
+        checkAITutorStatus(); // ADD THIS
+
     }
+
+    //remove if ai tutor is available
+
+    function checkAITutorStatus() {
+    const notice = document.getElementById("ai-dev-notice");
+    const input = document.getElementById("chat-input");
+    const button = document.getElementById("chat-send-btn");
+
+    if (!appState.settings.apiKey) {
+        notice.style.display = "block";
+        input.disabled = true;
+        button.disabled = true;
+        input.placeholder = "AI Tutor unavailable...";
+    } else {
+        notice.style.display = "none";
+        input.disabled = false;
+        button.disabled = false;
+        input.placeholder = "Ask a question...";
+    }
+}
 
     // --- 3. NAVIGATION (SPA) ---
     const navItems = document.querySelectorAll('.nav-item');
@@ -59,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
     navItems.forEach(item => {
         item.addEventListener('click', () => {
             const target = item.getAttribute('data-target');
-            
+
             navItems.forEach(n => n.classList.remove('active'));
             document.querySelectorAll(`.nav-item[data-target="${target}"]`).forEach(n => n.classList.add('active'));
 
@@ -68,6 +90,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const titleSpan = item.querySelector('span');
             pageTitle.innerText = titleSpan ? titleSpan.innerText : target.charAt(0).toUpperCase() + target.slice(1);
+            
+            if (target === "chatbot") {
+                checkAITutorStatus();
+            }
+       
         });
     });
 
@@ -149,62 +176,106 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // --- 6. AI TUTOR LOGIC (BACKEND API) ---
-const chatInput = document.getElementById('chat-input');
-const chatSendBtn = document.getElementById('chat-send-btn');
-const chatMessages = document.getElementById('chat-messages');
+    // --- 6. AI TUTOR LOGIC (GEMINI API) ---
+    const chatInput = document.getElementById('chat-input');
+    const chatSendBtn = document.getElementById('chat-send-btn');
+    const chatMessages = document.getElementById('chat-messages');
 
-function appendMessage(text, sender) {
-    const msgDiv = document.createElement('div');
-    msgDiv.className = `message ${sender}-msg`;
-    
-    let formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    formattedText = formattedText.replace(/\n/g, '<br>');
-    
-    msgDiv.innerHTML = formattedText;
-    chatMessages.appendChild(msgDiv);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-}
+    function appendMessage(text, sender) {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `message ${sender}-msg`;
+        
+        // Basic Markdown-to-HTML parser for bold text returned by Gemini
+        let formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        formattedText = formattedText.replace(/\n/g, '<br>');
+        
+        msgDiv.innerHTML = formattedText;
+        chatMessages.appendChild(msgDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
 
-async function handleChat() {
+
+    /* the current api key handler 
+    async function handleChat() {
+        const message = chatInput.value.trim();
+        const apiKey = appState.settings.apiKey;
+
+        if (!message) return;
+        
+        appendMessage(message, 'user');
+        chatInput.value = '';
+
+
+        if (!apiKey) {
+            
+            setTimeout(() => appendMessage('The AI Tutor is still being developed. It’s not available yet—check back soon.', 'bot'), 500);
+            return;
+        }
+
+        appendMessage('<i class="ph ph-circle-notch ph-spin"></i> Thinking...', 'bot');
+        const loadingMsg = chatMessages.lastElementChild;
+
+        try {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: "You are a helpful and concise study tutor for a student. Answer this: " + message }] }]
+                })
+            });
+            
+            const data = await response.json();
+            loadingMsg.remove();
+
+            if(data.error) throw new Error(data.error.message);
+            
+            const reply = data.candidates[0].content.parts[0].text;
+            appendMessage(reply, 'bot');
+        } catch (error) {
+            loadingMsg.remove();
+            appendMessage(`Error: ${error.message || "Failed to connect to API. Is your key correct?"}`, 'bot');
+        }
+    }
+
+    */
+
+    async function handleChat() {
     const message = chatInput.value.trim();
+    // We no longer need the API key on the frontend because the backend handles it!
+    
     if (!message) return;
-
+    
     appendMessage(message, 'user');
     chatInput.value = '';
-
+    
     appendMessage('<i class="ph ph-circle-notch ph-spin"></i> Thinking...', 'bot');
     const loadingMsg = chatMessages.lastElementChild;
 
     try {
+        // CHANGE: Fetch from your local backend instead of Google
         const response = await fetch('https://study-back-end.onrender.com/api/chat', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ message })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: message }) // Send the message to your Node.js server
         });
-
+        
         const data = await response.json();
         loadingMsg.remove();
 
-        if (!response.ok) {
-            throw new Error(data.reply || "Server error");
-        }
-
-        appendMessage(data.reply, 'bot');
-
+        if (data.error) throw new Error(data.error);
+        
+        // Use data.reply because that is what your backend sends back
+        const reply = data.reply; 
+        appendMessage(reply, 'bot');
     } catch (error) {
         loadingMsg.remove();
-        appendMessage('Error: Unable to connect to AI server.', 'bot');
-        console.error(error);
+        appendMessage(`Error: ${error.message || "Failed to connect to backend."}`, 'bot');
     }
 }
 
-chatSendBtn.addEventListener('click', handleChat);
-chatInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') handleChat();
-});
+    chatSendBtn.addEventListener('click', handleChat);
+    chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleChat(); });
+
     // --- 7. FOCUS MODE (POMODORO) ---
     let timerInterval;
     let timeLeft = appState.settings.workDuration * 60;
@@ -469,6 +540,7 @@ chatInput.addEventListener('keypress', (e) => {
     document.getElementById('api-key-input').addEventListener('change', (e) => {
         appState.settings.apiKey = e.target.value.trim();
         saveState();
+        checkAITutorStatus();
         showToast("API Key Saved!");
     });
 
