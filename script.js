@@ -1,4 +1,25 @@
-alert('Notice: AI is currently under maintenance. Please check back later.');
+function showAlert(html) {
+    const alertBox = document.getElementById("customAlert");
+    document.getElementById("alertText").innerHTML = html;
+    alertBox.style.display = "block";
+}
+
+
+showAlert(
+    '<mark><b>Notice:</b></mark> AI is currently under maintenance. Please check back later.'
+);
+
+
+function closeAlert() {
+    document.getElementById("customAlert").style.display = "none";
+
+    document.addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+        login();
+    }
+});
+
+}
 
 
 document.addEventListener('DOMContentLoaded', () => {
