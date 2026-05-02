@@ -1,4 +1,4 @@
-alert('THE AI CHATBOT IS NOW WORKING. TRY IT OUT.');
+alert('Notice: AI is currently under maintenance. Please check back later.');
 
 
 document.addEventListener('DOMContentLoaded', () => {
