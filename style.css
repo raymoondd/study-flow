@@ -262,6 +262,61 @@ body { background-color: var(--bg-color); color: var(--text-primary); overflow: 
     .task-input-row { flex-direction: column; align-items: stretch; }
     .task-input-row button { width: 100%; justify-content: center; }
     .stats-grid { grid-template-columns: 1fr; }
-    .timer-circle { width: 220px; height: 220px; }
-    .progress-ring { width: 220px; height: 220px; }
+    .timer-circle {
+        /* Uses clamp to keep it between 200px and 250px, scaling smoothly in between */
+        width: clamp(200px, 60vw, 250px);
+        height: clamp(200px, 60vw, 250px);
+    }
+    .progress-ring {
+        width: 100%;
+        height: 100%;
+    }
+    
+    .timer-display {
+        /* Fluid typography for the timer numbers */
+        font-size: clamp(40px, 10vw, 56px); 
+    }
+    
+    .timer-controls {
+        flex-wrap: wrap; /* Allows buttons to wrap on very narrow screens */
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .timer-controls button {
+        flex: 1 1 auto; /* Allows buttons to stretch to fill available space */
+        justify-content: center;
+    }
+    
+    .break-options {
+        width: 100%;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .break-btn {
+        flex: 1 1 auto;
+        text-align: center;
+    }
 }
+
+/* --- MUSIC MODE RESPONSIVENESS --- */
+
+    
+    .playlist-item {
+        /* Stack the song title and play button vertically on phones */
+        flex-direction: column; 
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .playlist-item span {
+        max-width: 100%; /* Override the 60% limit so text can use full width */
+        width: 100%;
+    }
+    
+    .song-actions {
+        width: 100%;
+        display: flex;
+        justify-content: flex-end; /* Push the play button to the right side */
+    }
